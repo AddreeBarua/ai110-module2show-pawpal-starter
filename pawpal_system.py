@@ -12,6 +12,7 @@ class Task:
     duration: int
     priority: str
     frequency: str
+    pet_name: str = ""
     is_complete: bool = False
 
     def mark_complete(self):
@@ -81,8 +82,8 @@ class Scheduler:
         """Sort all tasks by their scheduled time."""
         pass
 
-    def filter_tasks(self, criteria):
-        """Filter tasks based on specific criteria."""
+    def filter_tasks(self, pet_name=None, status=None):
+        """Filter tasks by pet name or completion status."""
         pass
 
     def detect_conflicts(self):

@@ -24,7 +24,20 @@ I designed four classes for PawPal+:
   conflict detection, and recurring tasks..
 
 **b. Design changes**
-  No design changes yet. Will update during implementation.
+  
+
+After Copilot reviewed pawpal_system.py I made 
+two changes:
+
+1. Added pet_name field to Task so each task 
+   knows which pet it belongs to.
+
+2. Changed filter_tasks(criteria) to 
+   filter_tasks(pet_name=None, status=None) 
+   to make filtering clearer.
+
+I ignored suggestions like Enum and Dict/Set 
+because they are too complex for this project.
 
 ---
 
