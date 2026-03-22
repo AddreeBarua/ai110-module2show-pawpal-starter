@@ -26,18 +26,20 @@ I designed four classes for PawPal+:
 **b. Design changes**
   
 
-After Copilot reviewed pawpal_system.py I made 
-two changes:
+After asking Copilot to review pawpal_system.py, 
+I made two small changes:
 
-1. Added pet_name field to Task so each task 
-   knows which pet it belongs to.
+1. Added pet_name field to Task so we know which 
+   pet a task belongs to without searching through 
+   all pets.
 
 2. Changed filter_tasks(criteria) to 
-   filter_tasks(pet_name=None, status=None) 
-   to make filtering clearer.
+   filter_tasks(pet_name=None, status=None) to make 
+   it clearer what the method actually filters by.
 
-I ignored suggestions like Enum and Dict/Set 
-because they are too complex for this project.
+I ignored suggestions to use Enum and Dict/Set 
+because they add unnecessary complexity for a 
+small app like PawPal+.
 
 ---
 
@@ -48,10 +50,27 @@ because they are too complex for this project.
 - What constraints does your scheduler consider (for example: time, priority, preferences)?
 - How did you decide which constraints mattered most?
 
+
+My scheduler considers three constraints:
+1. Time - tasks are sorted by scheduled_time
+2. Priority - high priority tasks are flagged first
+3. Completion status - completed tasks can be filtered out
+
+I decided time mattered most because a pet owner 
+needs to know what to do first in their day.owner 
+needs to know what to do first in their day.
+
 **b. Tradeoffs**
 
 - Describe one tradeoff your scheduler makes.
 - Why is that tradeoff reasonable for this scenario?
+
+
+My scheduler only checks for exact time matches 
+when detecting conflicts, not overlapping durations.
+
+This is reasonable because it keeps the logic 
+simple and fast for a small number of tasks.
 
 ---
 
@@ -62,11 +81,48 @@ because they are too complex for this project.
 - How did you use AI tools during this project (for example: design brainstorming, debugging, refactoring)?
 - What kinds of prompts or questions were most helpful?
 
+1. Design brainstorming - I asked Copilot to generate 
+   a Mermaid.js UML diagram based on my four classes 
+   and their attributes.
+
+2. Code generation - I used Copilot to generate class 
+   skeletons in pawpal_system.py and then fill in the 
+   full working logic for all methods.
+
+3. Code review - I asked Copilot to review my skeleton 
+   using #file:pawpal_system.py to find missing 
+   relationships or bottlenecks.
+
+4. Test generation - I used Copilot to write two 
+   pytest tests for mark_complete() and add_task().
+
+5. UI integration - I used Copilot to connect 
+   pawpal_system.py to app.py using st.session_state.
+
+The most helpful prompts were specific ones that 
+referenced the actual file using #file:pawpal_system.py 
+and included clear rules like "use dataclasses" or 
+"replace each pass with real working logic".
+
 **b. Judgment and verification**
 
 - Describe one moment where you did not accept an AI suggestion as-is.
 - How did you evaluate or verify what the AI suggested?
 
+When Copilot reviewed my skeleton it suggested using 
+Enum for priority and frequency fields, and using 
+Dict/Set instead of Lists for better performance.
+
+I rejected both suggestions because:
+1. Enums add unnecessary complexity for a small app
+2. Lists are easier to read and understand
+3. Performance does not matter with a small number 
+   of tasks like a pet owner would have
+
+I verified my decision by asking myself "does this 
+make the app better for the user?" and the answer 
+was no. I kept the simpler solution and it worked 
+perfectly in testing.
 ---
 
 ## 4. Testing and Verification
