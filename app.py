@@ -4,6 +4,17 @@ from pawpal_system import Owner, Pet, Task, Scheduler
 
 st.set_page_config(page_title="PawPal+", page_icon="🐾", layout="centered")
 
+# Helper function to get priority emoji
+def get_priority_emoji(priority: str) -> str:
+    """Return emoji indicator for priority level."""
+    if priority.lower() == "high":
+        return "🔴 High"
+    elif priority.lower() == "medium":
+        return "🟡 Medium"
+    elif priority.lower() == "low":
+        return "🟢 Low"
+    return priority
+
 st.title("🐾 PawPal+")
 
 st.markdown(
@@ -103,7 +114,7 @@ if "owner" in st.session_state:
                 "Time": t.scheduled_time.strftime("%H:%M"),
                 "Task": t.name,
                 "Duration": f"{t.duration} min",
-                "Priority": t.priority,
+                "Priority": get_priority_emoji(t.priority),
                 "Frequency": t.frequency,
                 "Status": "✓ Done" if t.is_complete else "○ Pending"
             }
@@ -118,19 +129,34 @@ if "owner" in st.session_state:
     st.subheader("Build Schedule")
     st.caption("Generate a sorted schedule and check for conflicts.")
     
+    # Filter section
+    st.markdown("### Filter Tasks")
+    filter_col1, filter_col2 = st.columns(2)
+    with filter_col1:
+        priority_filter = st.selectbox(
+            "Filter by priority",
+            ["All", "high", "medium", "low"],
+            index=0
+        )
+    
     if st.button("Generate schedule"):
         scheduler = Scheduler(owner)
         
         # Check for conflicts
         conflicts = scheduler.detect_conflicts()
         if conflicts:
-            st.warning(
-                f"⚠️ **{len(conflicts)} schedule conflict(s) detected!**\n\n"
-                + "\n".join([f"- {c[0].name} and {c[1].name} at {c[0].scheduled_time.strftime('%H:%M')}" for c in conflicts])
-            )
+            st.warning(f"⚠️ **{len(conflicts)} schedule conflict(s) detected!**")
+            for conflict_msg in conflicts:
+                st.warning(conflict_msg)
+        
+        # Get filtered tasks
+        if priority_filter == "All":
+            sorted_tasks = scheduler.sort_by_time()
+        else:
+            sorted_tasks = scheduler.filter_tasks(priority=priority_filter)
+            sorted_tasks = sorted(sorted_tasks, key=lambda t: t.scheduled_time)
         
         # Display sorted schedule
-        sorted_tasks = scheduler.sort_by_time()
         if sorted_tasks:
             st.success("✓ Schedule generated successfully!")
             schedule_data = [
@@ -139,7 +165,7 @@ if "owner" in st.session_state:
                     "Task": t.name,
                     "Pet": t.pet_name,
                     "Duration": f"{t.duration} min",
-                    "Priority": t.priority,
+                    "Priority": get_priority_emoji(t.priority),
                     "Status": "✓ Done" if t.is_complete else "○ Pending"
                 }
                 for t in sorted_tasks
