@@ -84,38 +84,70 @@ class Scheduler:
         return self.owner.get_all_tasks()
 
     def sort_by_time(self):
-        """Sort all tasks by their scheduled time."""
-        return sorted(self.get_all_tasks(), key=lambda t: t.scheduled_time)
+        """Sort all tasks by their scheduled time with stable secondary sorting."""
+        return sorted(
+            self.get_all_tasks(), 
+            key=lambda t: (t.scheduled_time, t.pet_name, t.name)
+        )
 
-    def filter_tasks(self, pet_name=None, status=None):
-        """Filter tasks by pet name or completion status."""
+    def filter_tasks(self, pet_name=None, status=None, priority=None):
+        """Filter tasks by pet name, completion status, and/or priority."""
         all_tasks = self.get_all_tasks()
         filtered = all_tasks
         if pet_name:
             filtered = [t for t in filtered if t.pet_name == pet_name]
         if status is not None:
             filtered = [t for t in filtered if t.is_complete == status]
+        if priority:
+            filtered = [t for t in filtered if t.priority == priority]
         return filtered
 
     def detect_conflicts(self):
-        """Detect any conflicting task schedules."""
+        """Detect conflicting task schedules and return readable warning messages."""
         all_tasks = self.get_all_tasks()
         conflicts = []
         for i in range(len(all_tasks)):
             for j in range(i + 1, len(all_tasks)):
                 if all_tasks[i].scheduled_time == all_tasks[j].scheduled_time:
-                    conflicts.append((all_tasks[i], all_tasks[j]))
+                    conflict_msg = (
+                        f"'{all_tasks[i].name}' ({all_tasks[i].pet_name}) "
+                        f"conflicts with '{all_tasks[j].name}' ({all_tasks[j].pet_name}) "
+                        f"at {all_tasks[i].scheduled_time.strftime('%H:%M')}"
+                    )
+                    conflicts.append(conflict_msg)
         return conflicts
 
     def handle_recurring_tasks(self):
-        """Handle the management of recurring tasks."""
+        """Handle recurring tasks by creating new Task instances for next occurrence."""
         from datetime import timedelta
         all_tasks = self.get_all_tasks()
         for task in all_tasks:
             if task.is_complete and task.frequency:
-                if task.frequency.lower() == 'daily':
-                    task.reschedule(task.scheduled_time + timedelta(days=1))
-                    task.is_complete = False
-                elif task.frequency.lower() == 'weekly':
-                    task.reschedule(task.scheduled_time + timedelta(weeks=1))
-                    task.is_complete = False
+                pet = next((p for p in self.owner.pets if p.name == task.pet_name), None)
+                if pet:
+                    if task.frequency.lower() == 'daily':
+                        next_time = task.scheduled_time + timedelta(days=1)
+                        new_task = Task(
+                            name=task.name,
+                            description=task.description,
+                            scheduled_time=next_time,
+                            duration=task.duration,
+                            priority=task.priority,
+                            frequency=task.frequency,
+                            pet_name=task.pet_name,
+                            is_complete=False
+                        )
+                        pet.add_task(new_task)
+                    elif task.frequency.lower() == 'weekly':
+                        next_time = task.scheduled_time + timedelta(weeks=1)
+                        new_task = Task(
+                            name=task.name,
+                            description=task.description,
+                            scheduled_time=next_time,
+                            duration=task.duration,
+                            priority=task.priority,
+                            frequency=task.frequency,
+                            pet_name=task.pet_name,
+                            is_complete=False
+                        )
+                        pet.add_task(new_task)
