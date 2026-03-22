@@ -87,3 +87,12 @@ Tests cover:
 5. Add tests to verify key behaviors
 6. Connect logic to Streamlit UI in app.py
 7. Refine UML to match final implementation
+
+## 🎨 Challenge 4: Professional UI Formatting
+
+Enhanced CLI output using the `tabulate` library:
+
+- 🚶 Walk, 🍽️ Feed, 💊 Medication, ✂️ Groom, 
+  🎾 Play, 📋 Other task type emojis
+- ⏳ Pending and ✅ Complete status indicators
+- Clean grid table format using tabulate
