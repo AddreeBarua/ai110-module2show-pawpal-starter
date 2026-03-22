@@ -7,7 +7,7 @@
 - Briefly describe your initial UML design.
 - What classes did you include, and what responsibilities did you assign to each?
 
-I designed four classes for PawPal+:
+---I designed four classes for PawPal+:
 
 - Task: Represents one care activity. Stores the name, 
   scheduled time, duration, priority, frequency, 
@@ -26,7 +26,7 @@ I designed four classes for PawPal+:
 **b. Design changes**
   
 
-After asking Copilot to review pawpal_system.py, 
+----After asking Copilot to review pawpal_system.py, 
 I made two small changes:
 
 1. Added pet_name field to Task so we know which 
@@ -51,7 +51,7 @@ small app like PawPal+.
 - How did you decide which constraints mattered most?
 
 
-My scheduler considers three constraints:
+---My scheduler considers three constraints:
 1. Time - tasks are sorted by scheduled_time
 2. Priority - high priority tasks are flagged first
 3. Completion status - completed tasks can be filtered out
@@ -65,14 +65,13 @@ needs to know what to do first in their day.
 - Describe one tradeoff your scheduler makes.
 - Why is that tradeoff reasonable for this scenario?
 
-
-My scheduler only checks for exact time matches 
+---My scheduler only checks for exact time matches 
 when detecting conflicts, not overlapping durations.
 
 This is reasonable because it keeps the logic 
 simple and fast for a small number of tasks.
 
----
+
 
 ## 3. AI Collaboration
 
@@ -81,7 +80,7 @@ simple and fast for a small number of tasks.
 - How did you use AI tools during this project (for example: design brainstorming, debugging, refactoring)?
 - What kinds of prompts or questions were most helpful?
 
-1. Design brainstorming - I asked Copilot to generate 
+---1. Design brainstorming - I asked Copilot to generate 
    a Mermaid.js UML diagram based on my four classes 
    and their attributes.
 
@@ -109,7 +108,7 @@ and included clear rules like "use dataclasses" or
 - Describe one moment where you did not accept an AI suggestion as-is.
 - How did you evaluate or verify what the AI suggested?
 
-When Copilot reviewed my skeleton it suggested using 
+---When Copilot reviewed my skeleton it suggested using 
 Enum for priority and frequency fields, and using 
 Dict/Set instead of Lists for better performance.
 
@@ -131,29 +130,17 @@ perfectly in testing.
 
 - What behaviors did you test?
 - Why were these tests important?
----
-## 4. Testing and Verification
 
-**a. What you tested**
+---1. Task Completion - verified that mark_complete() 
+   changes is_complete from False to True. This was 
+   important because the whole scheduling system 
+   depends on tracking whether tasks are done.
 
-- What behaviors did you test?
-- Why were these tests important?
+2. Task Addition - verified that add_task() increases 
+   a pet's task count by 1. This was important because 
+   if tasks don't get added correctly the scheduler 
+   has no data to work with.
 
-**b. Confidence**
-
-- How confident are you that your scheduler works correctly?
-- What edge cases would you test next if you had more time?
-
----
-My scheduler only checks for exact time matches 
-when detecting conflicts, not overlapping durations.
-
-For example if one task runs 08:00 to 08:30 and 
-another starts at 08:15, no conflict is detected.
-
-This is reasonable because it keeps the logic 
-simple and fast. A pet owner with a small number 
-of tasks does not need complex overlap detection.
 
 **b. Confidence**
 
