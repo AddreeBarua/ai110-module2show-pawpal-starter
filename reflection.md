@@ -68,8 +68,12 @@ needs to know what to do first in their day.
 ---My scheduler only checks for exact time matches 
 when detecting conflicts, not overlapping durations.
 
+For example if one task runs 08:00 to 08:30 and 
+another starts at 08:15, no conflict is detected.
+
 This is reasonable because it keeps the logic 
-simple and fast for a small number of tasks.
+simple and fast. A pet owner with a small number 
+of tasks does not need complex overlap detection
 
 
 
