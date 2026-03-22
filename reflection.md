@@ -7,10 +7,24 @@
 - Briefly describe your initial UML design.
 - What classes did you include, and what responsibilities did you assign to each?
 
-**b. Design changes**
+I designed four classes for PawPal+:
 
-- Did your design change during implementation?
-- If yes, describe at least one change and why you made it.
+- Task: Represents one care activity. Stores the name, 
+  scheduled time, duration, priority, frequency, 
+  and whether it is complete.
+
+- Pet: Represents the pet. Stores name, species, age, 
+  and holds a list of tasks.
+
+- Owner: Represents the person using the app. Stores 
+  their name and contact info and manages their pets.
+
+- Scheduler: Acts as the brain. Pulls all tasks from 
+  the owner's pets and handles sorting, filtering, 
+  conflict detection, and recurring tasks..
+
+**b. Design changes**
+  No design changes yet. Will update during implementation.
 
 ---
 
