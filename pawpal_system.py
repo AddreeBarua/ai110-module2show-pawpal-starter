@@ -17,11 +17,11 @@ class Task:
 
     def mark_complete(self):
         """Mark the task as complete."""
-        pass
+        self.is_complete = True
 
     def reschedule(self, new_time: datetime):
         """Reschedule the task to a new time."""
-        pass
+        self.scheduled_time = new_time
 
 
 @dataclass
@@ -34,15 +34,16 @@ class Pet:
 
     def add_task(self, task: Task):
         """Add a task to the pet's task list."""
-        pass
+        self.tasks.append(task)
 
     def remove_task(self, task: Task):
         """Remove a task from the pet's task list."""
-        pass
+        if task in self.tasks:
+            self.tasks.remove(task)
 
     def get_tasks(self):
         """Get all tasks for this pet."""
-        pass
+        return self.tasks
 
 
 class Owner:
@@ -56,15 +57,19 @@ class Owner:
 
     def add_pet(self, pet: Pet):
         """Add a pet to the owner's list of pets."""
-        pass
+        self.pets.append(pet)
 
     def remove_pet(self, pet: Pet):
         """Remove a pet from the owner's list of pets."""
-        pass
+        if pet in self.pets:
+            self.pets.remove(pet)
 
     def get_all_tasks(self):
         """Get all tasks for all pets owned by this owner."""
-        pass
+        all_tasks = []
+        for pet in self.pets:
+            all_tasks.extend(pet.get_tasks())
+        return all_tasks
 
 
 class Scheduler:
@@ -76,20 +81,41 @@ class Scheduler:
 
     def get_all_tasks(self):
         """Get all tasks for the owner's pets."""
-        pass
+        return self.owner.get_all_tasks()
 
     def sort_by_time(self):
         """Sort all tasks by their scheduled time."""
-        pass
+        return sorted(self.get_all_tasks(), key=lambda t: t.scheduled_time)
 
     def filter_tasks(self, pet_name=None, status=None):
         """Filter tasks by pet name or completion status."""
-        pass
+        all_tasks = self.get_all_tasks()
+        filtered = all_tasks
+        if pet_name:
+            filtered = [t for t in filtered if t.pet_name == pet_name]
+        if status is not None:
+            filtered = [t for t in filtered if t.is_complete == status]
+        return filtered
 
     def detect_conflicts(self):
         """Detect any conflicting task schedules."""
-        pass
+        all_tasks = self.get_all_tasks()
+        conflicts = []
+        for i in range(len(all_tasks)):
+            for j in range(i + 1, len(all_tasks)):
+                if all_tasks[i].scheduled_time == all_tasks[j].scheduled_time:
+                    conflicts.append((all_tasks[i], all_tasks[j]))
+        return conflicts
 
     def handle_recurring_tasks(self):
         """Handle the management of recurring tasks."""
-        pass
+        from datetime import timedelta
+        all_tasks = self.get_all_tasks()
+        for task in all_tasks:
+            if task.is_complete and task.frequency:
+                if task.frequency.lower() == 'daily':
+                    task.reschedule(task.scheduled_time + timedelta(days=1))
+                    task.is_complete = False
+                elif task.frequency.lower() == 'weekly':
+                    task.reschedule(task.scheduled_time + timedelta(weeks=1))
+                    task.is_complete = False
